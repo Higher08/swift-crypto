@@ -168,8 +168,8 @@ extension SecurityRSAPrivateKey {
  }
  
 extension SecurityRSAPrivateKey {
-    internal func decrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding) throws -> _RSA.Encryption.RSADecryptedData {
-        let algorithm = try SecKeyAlgorithm(padding: padding)
+    internal func decrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding, hash: _RSA.Encryption.Hash) throws -> _RSA.Encryption.RSADecryptedData {
+        let algorithm = try SecKeyAlgorithm(padding: padding, hash: hash)
         let dataToDecrypt = Data(data)
         var error: Unmanaged<CFError>? = nil
         let dec = SecKeyCreateDecryptedData(self.backing, algorithm, dataToDecrypt as CFData, &error)
@@ -202,8 +202,8 @@ extension SecurityRSAPublicKey {
 }
 
 extension SecurityRSAPublicKey {
-    internal func encrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding) throws -> _RSA.Encryption.RSAEncryptedData {
-        let algorithm = try SecKeyAlgorithm(padding: padding)
+    internal func encrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding, hash: _RSA.Encryption.Hash) throws -> _RSA.Encryption.RSAEncryptedData {
+        let algorithm = try SecKeyAlgorithm(padding: padding, hash: hash)
         let dataToEncrypt = Data(data)
         var error: Unmanaged<CFError>? = nil
         let enc = SecKeyCreateEncryptedData(self.backing, algorithm, dataToEncrypt as CFData, &error)
@@ -252,12 +252,18 @@ extension SecKeyAlgorithm {
         }
     }
     
-    fileprivate init(padding: _RSA.Encryption.Padding) throws {
+    fileprivate init(padding: _RSA.Encryption.Padding, hash: _RSA.Encryption.Hash) throws {
         switch padding.backing {
         case .pkcs1v1_5:
             self = .rsaEncryptionPKCS1
         case .pkcs1_oaep:
-            self = .rsaEncryptionOAEPSHA1
+            if hash.backing == .sha1 {
+                self = .rsaEncryptionOAEPSHA1
+            } else if hash.backing == .sha256 {
+                self = .rsaEncryptionOAEPSHA256
+            } else {
+                self = .rsaEncryptionOAEPSHA1
+            }
         }
     }
 }
