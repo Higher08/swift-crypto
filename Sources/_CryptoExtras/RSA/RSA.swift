@@ -358,16 +358,32 @@ extension _RSA.Encryption {
         public static let insecurePKCS1v1_5 = Self(.pkcs1v1_5)
         public static let PKCS1_OAEP = Self(.pkcs1_oaep)
     }
+    
+    public struct Hash {
+        internal enum Backing {
+            case sha1
+            case sha256
+        }
+        
+        internal var backing: Backing
+        
+        private init(_ backing: Backing) {
+            self.backing = backing
+        }
+        
+        public static let sha1 = Self(.sha1)
+        public static let sha256 = Self(.sha256)
+    }
 }
 
 extension _RSA.Encryption.PrivateKey {
-    public func decrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding) throws -> _RSA.Encryption.RSADecryptedData {
-        return try self.backing.decrypt(data, padding: padding)
+    public func decrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding, hash: _RSA.Encryption.Hash) throws -> _RSA.Encryption.RSADecryptedData {
+        return try self.backing.decrypt(data, padding: padding, hash: hash)
     }
 }
 
 extension _RSA.Encryption.PublicKey {
-    public func encrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding) throws -> _RSA.Encryption.RSAEncryptedData {
-        return try self.backing.encrypt(data, padding: padding)
+    public func encrypt<D: DataProtocol>(_ data: D, padding: _RSA.Encryption.Padding, hash: _RSA.Encryption.Hash) throws -> _RSA.Encryption.RSAEncryptedData {
+        return try self.backing.encrypt(data, padding: padding, hash: hash)
     }
 }
