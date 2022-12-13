@@ -107,4 +107,18 @@ int CCryptoBoringSSLShims_RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, void *out
                                             size_t in_len, const EVP_MD *md,
                                             const EVP_MD *mgf1_md, int salt_len);
 
+int CCryptoBoringSSLShims_RSA_public_encrypt(int flen, const void *from, void *to,
+                                             RSA *rsa, int padding);
+
+int CCryptoBoringSSLShims_EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx, void *out, size_t *outlen,
+                                           const void *in, int inlen);
+
+
+int CCryptoBoringSSLShims_RSA_private_decrypt(int flen, const void *from, void *to,
+                                              RSA *rsa, int padding);
+
+int CCryptoBoringSSLShims_RSA_padding_add_PKCS1_OAEP_mgf1(void *to, int to_len,
+                                    const void *from, int from_len,
+                                                          const EVP_MD *md, const EVP_MD *mgf1md);
+
 #endif  // C_CRYPTO_BORINGSSL_SHIMS_H
