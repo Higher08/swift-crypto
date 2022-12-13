@@ -141,6 +141,23 @@ int CCryptoBoringSSLShims_RSA_public_encrypt(int flen, const void *from, void *t
     return CCryptoBoringSSL_RSA_public_encrypt(flen, from, to, rsa, padding);
 }
 
+int CCryptoBoringSSLShims_EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx, void *out, size_t *outlen,
+                                             const void *in, int inlen) {
+    return CCryptoBoringSSL_EVP_PKEY_encrypt(ctx, out, outlen, in, inlen);
+}
+
+int CCryptoBoringSSLShims_RSA_padding_add_PKCS1_OAEP_mgf1(void *to, int to_len,
+                                    const void *from, int from_len,
+                                    const EVP_MD *md, const EVP_MD *mgf1md) {
+    return CCryptoBoringSSL_RSA_padding_add_PKCS1_OAEP_mgf1(to, to_len, from, from_len, NULL, 0, md, mgf1md);
+}
+
+//EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *outlen, const uint8_t *in, size_t inlen)
+
+//int RSA_public_encrypt(size_t flen, const uint8_t *from, uint8_t *to, RSA *rsa,
+//                       int padding) { }
+
+
 int CCryptoBoringSSLShims_RSA_private_decrypt(int flen, const void *from, void *to,
                                               RSA *rsa, int padding) {
     return CCryptoBoringSSL_RSA_private_decrypt(flen, from, to, rsa, padding);
